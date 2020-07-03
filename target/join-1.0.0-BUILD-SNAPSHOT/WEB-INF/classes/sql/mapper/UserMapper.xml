@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="legecy.member.dao.UserVO2">
+ 
+<select id="useridpwchk" resultType="int" parameterType="legecy.member.dao.UserVO2">
+	select count(*) from kh_user where ID = #{id} and PW = #{pw}
+	<!-- and EMAIL = #{param3} --> 
+</select>
+
+<select id="useridpwchk2" resultType="map" parameterType="legecy.member.dao.UserVO2">
+	select id,pw from kh_user
+	<!-- and EMAIL = #{param3} --> 
+</select>
+
+ 
+<insert id="joinmember" parameterType="legecy.member.dao.UserVO2">
+	insert into kh_user values(#{id}, #{pw})
+</insert>
+
+
+
+
+</mapper>

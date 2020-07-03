@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
+						https://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/beans
+					    https://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+					    https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	
+	<mvc:annotation-drive/>
+		<mvc:message-converters>
+		<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+			<property name="supportedMediaTypes">
+            	<list>
+                	<value>text/html; charset=UTF-8</value>
+                </list>
+            </property>
+        </bean>
+		<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			<property name="supportedMediaTypes">
+				<list>
+					<value>application/json; charset=UTF-8</value>
+				</list>
+            </property>
+        </bean>
+         </mvc:message-converters>
+	
+	</mvc:annotation-driven>
+	
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/login_bootstrap/**" location="/login_bootstrap/" />
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	
+	<!-- beans:bean 이라고 적어야 하는 이유 !!
+		2번 line에 보면 beans:beans xmlns="http://www.springframework.org/schema/mvc" 이라고 되있다 마지막에 mvc 라고 적혀있기 때문에 beans 를 다 적어야 한다.
+		저부분을 mvc가 아닌 beans 로 바꾼다면 bean 라고 적어도 오류가 없다. 
+	 -->	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">	<!-- ViewResolver 로 JSP 와 name을 매칭한다. -->
+		<!-- property 란
+		bean class= 저 위에 를 호출하면 아래와 같은 정보를 넘겨준다. 라는 뜻 인자값?
+		 -->
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<context:component-scan base-package="legecy.member.join" /> <!-- 베이스 패키지 하위 모든 어노테이션을 스캔해서 빈으로 등록하겠다는 것 -->
+ 
+	<bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+		<property name="driverClassName" value="org.mariadb.jdbc.Driver" />	 <!--  어떤 DB를 사용하는지에 따라 value가 다르다 --> 
+		<property name="url" value="jdbc:mariadb://127.0.01:3308/KH_DB" />	<!--  DB의 주소값이다.  --> 
+		<property name="username" value="root" />	<!--  DB의 아이디 -->   
+		<property name="password" value="123456" />	 <!-- DB의 비밀번호  --> 
+	</bean>
+	
+		<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:/sql/mapper/*.xml"/>
+										<!-- classpath 의 위치는 membership_pj/target/classes/sql/mapper/*.xml 이다. -->
+	</bean>
+	
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+	<!-- Autowired 는 같은 객체의 타입 and 프로퍼티의 이름 과 빈의 이름이 같을때 의존성 주입을한다. -->
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+	
+
+	
+	<context:component-scan base-package="legecy.member.dao" />
+	<context:component-scan base-package="legecy.member.dao2" />
+</beans>
