@@ -30,7 +30,8 @@ public class MailsendImpl implements Mailsend{
 			helper.setText((String) mailvo.get("text"));
 			helper.setFrom((String)mailvo.get("from"));
 			helper.setTo((String)mailvo.get("to"));
-			
+
+
 			javamailsender.send(message);
 			return true;
 		}catch(MessagingException e) {
